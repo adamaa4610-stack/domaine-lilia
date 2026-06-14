@@ -177,6 +177,7 @@ async function seedRooms() {
 }
 
 async function checkAvailability(roomId, checkIn, checkOut) {
+  if (!dbReady) await getDB();
   if (useTurso) {
     const result = await db.execute({
       sql: "SELECT COUNT(*) as c FROM bookings WHERE room_id = ? AND status != 'cancelled' AND check_in < ? AND check_out > ?",
@@ -191,6 +192,7 @@ async function checkAvailability(roomId, checkIn, checkOut) {
 }
 
 async function dbQuery(sql, params = []) {
+  if (!dbReady) await getDB();
   if (useTurso) {
     const result = await db.execute({ sql, args: params });
     return result.rows.map(row => {
