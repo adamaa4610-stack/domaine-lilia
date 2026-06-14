@@ -2,11 +2,12 @@ const path = require('path');
 const fs = require('fs');
 const https = require('https');
 
-// Database selection
-const useTurso = !!(process.env.TURSO_URL && process.env.TURSO_TOKEN);
-
 let db;
 let dbReady = false;
+
+function useTurso() {
+  return !!(process.env.TURSO_URL && process.env.TURSO_TOKEN);
+}
 
 function tursoValue(v) {
   if (v === null || v === undefined) return null;
@@ -68,11 +69,23 @@ function tursoFetch(stmtOrSql, maybeArgs) {
 async function getDB() {
   if (dbReady) return db;
 
-  if (useTurso) {
+  if (useTurso()) {
     db = { execute: tursoFetch };
   } else {
     const initSqlJs = require('sql.js');
-    const SQL = await initSqlJs();
+    const SQL = await initSqlJs({
+      locateFile: file => {
+        const paths = [
+          path.join(__dirname, '..', 'node_modules', 'sql.js', 'dist', file),
+          path.join(__dirname, '..', '..', 'sql.js', 'dist', file),
+          path.join(process.cwd(), 'node_modules', 'sql.js', 'dist', file),
+        ];
+        for (const p of paths) {
+          if (fs.existsSync(p)) return p;
+        }
+        return paths[0];
+      }
+    });
     const dbPath = process.env.DATA_DIR
       ? path.join(process.env.DATA_DIR, 'hotel.db')
       : path.join(__dirname, 'hotel.db');
@@ -88,7 +101,7 @@ async function getDB() {
 
   await initTables();
   await seedRooms();
-  if (useTurso) {
+  if (useTurso()) {
     // Turso needs explicit sync
   } else {
     saveDB();
@@ -110,7 +123,7 @@ function saveDB() {
 }
 
 async function initTables() {
-  if (useTurso) {
+  if (useTurso()) {
     await db.execute(`
       CREATE TABLE IF NOT EXISTS rooms (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -197,7 +210,7 @@ async function initTables() {
 
 async function seedRooms() {
   let count;
-  if (useTurso) {
+  if (useTurso()) {
     const result = await db.execute('SELECT COUNT(*) as c FROM rooms');
     count = result.rows[0].c;
   } else {
@@ -214,7 +227,7 @@ async function seedRooms() {
     { name_ar: 'جناح عائلي', name_fr: 'Suite Familiale', name_en: 'Family Suite', description_ar: 'جناح عائلي كبير بغرفتي نوم وصالة مع مطبخ صغير، يتسع لأربعة أشخاص.', description_fr: 'Grande suite familiale avec deux chambres, un salon et une kitchenette, pouvant accueillir quatre personnes.', description_en: 'Large family suite with two bedrooms, a living room, and a kitchenette, accommodating four persons.', price: 1600, capacity: 4, image: '/images/room5.jpg' }
   ];
 
-  if (useTurso) {
+  if (useTurso()) {
     for (const r of rooms) {
       await db.execute({
         sql: 'INSERT INTO rooms (name_ar, name_fr, name_en, description_ar, description_fr, description_en, price, capacity, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
@@ -232,7 +245,7 @@ async function seedRooms() {
 
 async function checkAvailability(roomId, checkIn, checkOut) {
   if (!dbReady) await getDB();
-  if (useTurso) {
+  if (useTurso()) {
     const result = await db.execute({
       sql: "SELECT COUNT(*) as c FROM bookings WHERE room_id = ? AND status != 'cancelled' AND check_in < ? AND check_out > ?",
       args: [roomId, checkOut, checkIn]
@@ -247,7 +260,7 @@ async function checkAvailability(roomId, checkIn, checkOut) {
 
 async function dbQuery(sql, params = []) {
   if (!dbReady) await getDB();
-  if (useTurso) {
+  if (useTurso()) {
     const result = await db.execute({ sql, args: params });
     return result.rows.map(row => {
       const obj = {};
