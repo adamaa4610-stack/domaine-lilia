@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login - Domaine De Lilia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="admin-login">
+    <div class="admin-login-box">
+      <div class="admin-login-logo">
+        <i class="fas fa-hotel"></i>
+        <h2>Domaine De Lilia</h2>
+      </div>
+      <h3>Login</h3>
+      <form action="/admin/login" method="POST">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" name="username" id="username" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" name="password" id="password" required>
+        </div>
+        <% if (typeof error !== 'undefined' && error) { %>
+          <div class="alert alert-error">Invalid username or password</div>
+        <% } %>
+        <button type="submit" class="btn btn-gold btn-lg" style="width:100%">Login</button>
+      </form>
+      <a href="/ar" class="admin-back-link"><i class="fas fa-arrow-left"></i> Back to site</a>
+    </div>
+  </div>
+</body>
+</html>

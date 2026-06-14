@@ -1,0 +1,43 @@
+<%- include('partials/header') %>
+  <section class="page-header">
+    <div class="container">
+      <h1><%= t.about_title %></h1>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="about-content">
+        <div class="about-text">
+          <p><%= t.about_desc1 %></p>
+          <p><%= t.about_desc2 %></p>
+          <div class="about-info">
+            <div class="info-item">
+              <i class="fas fa-bed"></i>
+              <span class="info-label"><%= t.about_info1_label %></span>
+              <span class="info-value"><%= t.about_info1_value %></span>
+            </div>
+            <div class="info-item">
+              <i class="fas fa-clock"></i>
+              <span class="info-label"><%= t.about_info2_label %></span>
+              <span class="info-value"><%= t.about_info2_value %></span>
+            </div>
+            <div class="info-item">
+              <i class="fas fa-clock"></i>
+              <span class="info-label"><%= t.about_info3_label %></span>
+              <span class="info-value"><%= t.about_info3_value %></span>
+            </div>
+            <div class="info-item">
+              <i class="fas fa-phone"></i>
+              <span class="info-label"><%= t.about_info4_label %></span>
+              <span class="info-value"><%= t.about_info4_value %></span>
+            </div>
+          </div>
+        </div>
+        <div class="about-map">
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d13281.055787117693!2d-7.0523525!3d33.8145166!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xda70855b2496a41%3A0x5a581c4186b44c67!2sDomaine%20De%20Lilia!5e0!3m2!1sar!2sma!4v1" width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+<%- include('partials/footer') %>

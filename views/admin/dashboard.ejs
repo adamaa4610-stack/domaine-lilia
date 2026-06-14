@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - Domaine De Lilia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container">
+      <a href="/admin" class="nav-logo">
+        <span class="logo-icon"><i class="fas fa-hotel"></i></span>
+        <span class="logo-text">Domaine De Lilia - Admin</span>
+      </a>
+      <div class="nav-menu" style="display:flex">
+        <ul class="nav-links">
+          <li><a href="/ar"><i class="fas fa-arrow-left"></i> Back to Site</a></li>
+          <li><a href="/admin/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <section class="section">
+      <div class="container">
+        <% 
+          const pendingCount = bookings.filter(b => b.status === 'pending').length;
+          const confirmedCount = bookings.filter(b => b.status === 'confirmed').length;
+        %>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;margin-bottom:40px">
+          <div style="background:#fff;padding:25px;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.08);text-align:center">
+            <div style="font-size:2.5rem;color:#C9A962;font-weight:700"><%= pendingCount %></div>
+            <div style="color:#856404;font-weight:600">Pending Bookings</div>
+          </div>
+          <div style="background:#fff;padding:25px;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.08);text-align:center">
+            <div style="font-size:2.5rem;color:#28a745;font-weight:700"><%= confirmedCount %></div>
+            <div style="color:#155724;font-weight:600">Confirmed Bookings</div>
+          </div>
+          <div style="background:#fff;padding:25px;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.08);text-align:center">
+            <div style="font-size:2.5rem;color:#1B2A4A;font-weight:700"><%= bookings.length %></div>
+            <div style="color:#666;font-weight:600">Total Bookings</div>
+          </div>
+          <div style="background:#fff;padding:25px;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.08);text-align:center">
+            <div style="font-size:2.5rem;color:#1B2A4A;font-weight:700"><%= messages.length %></div>
+            <div style="color:#666;font-weight:600">Messages</div>
+          </div>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px;margin-bottom:20px">
+          <h2 style="margin:0">Bookings</h2>
+          <div style="display:flex;gap:10px">
+            <% if (bookings.length > 0) { %>
+              <a href="/admin/bookings/export" class="btn btn-outline" style="font-size:0.85rem;padding:8px 20px"><i class="fas fa-download"></i> Export CSV</a>
+            <% } %>
+          </div>
+        </div>
+
+        <% if (bookings.length === 0) { %>
+          <div style="background:#fff;padding:60px;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.08);text-align:center">
+            <i class="fas fa-calendar-check" style="font-size:3rem;color:#C9A962;margin-bottom:15px;display:block"></i>
+            <p style="color:#666;font-size:1.1rem">No bookings yet. Bookings will appear here when guests submit them.</p>
+          </div>
+        <% } else { %>
+          <div style="overflow-x:auto">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Guest</th>
+                  <th>Email / Phone</th>
+                  <th>Room</th>
+                  <th>Dates</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% bookings.forEach(b => { %>
+                  <tr>
+                    <td><strong><%= b.guest_name %></strong></td>
+                    <td><%= b.email %><br><small style="color:#999"><%= b.phone %></small></td>
+                    <td><%= b.room_name %></td>
+                    <td><%= b.check_in %> → <%= b.check_out %></td>
+                    <td><span class="status status-<%= b.status %>"><%= b.status %></span></td>
+                    <td>
+                      <% if (b.status === 'pending') { %>
+                        <form action="/admin/booking/<%= b.id %>/confirmed" method="POST" style="display:inline">
+                          <button type="submit" class="btn btn-sm btn-success">Confirm</button>
+                        </form>
+                        <form action="/admin/booking/<%= b.id %>/cancelled" method="POST" style="display:inline">
+                          <button type="submit" class="btn btn-sm btn-danger">Cancel</button>
+                        </form>
+                      <% } else { %>
+                        <span class="text-muted">-</span>
+                      <% } %>
+                    </td>
+                  </tr>
+                  <% if (b.message) { %>
+                    <tr><td colspan="6" style="font-style:italic;color:#666;padding:5px 15px;background:#f9f9f9">Note: <%= b.message %></td></tr>
+                  <% } %>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        <% } %>
+
+        <hr style="margin:3rem 0">
+
+        <h2 style="margin-bottom:1rem">Guest Messages</h2>
+        <% if (messages.length === 0) { %>
+          <div style="background:#fff;padding:40px;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.08);text-align:center">
+            <i class="fas fa-envelope-open-text" style="font-size:2.5rem;color:#C9A962;margin-bottom:10px;display:block"></i>
+            <p style="color:#666">No messages yet.</p>
+          </div>
+        <% } else { %>
+          <div style="overflow-x:auto">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Subject</th>
+                  <th>Message</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% messages.forEach(m => { %>
+                  <tr>
+                    <td><%= m.name %></td>
+                    <td><a href="mailto:<%= m.email %>" style="color:#C9A962;text-decoration:none"><%= m.email %></a></td>
+                    <td><%= m.subject || '-' %></td>
+                    <td><%= m.message %></td>
+                    <td><%= new Date(m.created_at).toLocaleDateString() %></td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        <% } %>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

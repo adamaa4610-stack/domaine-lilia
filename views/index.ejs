@@ -1,0 +1,65 @@
+<%- include('partials/header') %>
+  <section class="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1 class="hero-title"><%= t.hero_title %></h1>
+      <p class="hero-subtitle"><%= t.hero_subtitle %></p>
+      <a href="/<%= lang %>/booking" class="btn btn-gold btn-lg"><%= t.hero_btn %></a>
+    </div>
+  </section>
+
+  <section class="section features">
+    <div class="container">
+      <h2 class="section-title"><%= t.features_title %></h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-tree"></i></div>
+          <h3><%= t.feature1_title %></h3>
+          <p><%= t.feature1_desc %></p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-hand-holding-heart"></i></div>
+          <h3><%= t.feature2_title %></h3>
+          <p><%= t.feature2_desc %></p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-mountain-sun"></i></div>
+          <h3><%= t.feature3_title %></h3>
+          <p><%= t.feature3_desc %></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section rooms-preview" style="background: var(--bg-light);">
+    <div class="container">
+      <h2 class="section-title"><%= t.rooms_title %></h2>
+      <div class="rooms-grid">
+        <% rooms.forEach(room => { %>
+          <div class="room-card">
+            <div class="room-image">
+              <img src="<%= room.image %>" alt="<%= room['name_' + lang] %>">
+              <div class="room-price"><%= room.price %> <%= t.room_price %> <span><%= t.room_per_night %></span></div>
+            </div>
+            <div class="room-info">
+              <h3><%= room['name_' + lang] %></h3>
+              <p><%= room['description_' + lang].substring(0, 100) %>...</p>
+              <div class="room-meta">
+                <span><i class="fas fa-users"></i> <%= room.capacity %> <%= t.room_guests %></span>
+              </div>
+              <a href="/<%= lang %>/booking" class="btn btn-outline"><%= t.room_btn %></a>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+  </section>
+
+  <section class="section cta">
+    <div class="container">
+      <h2><%= t.hero_btn %></h2>
+      <p><%= t.site_tagline %></p>
+      <a href="/<%= lang %>/contact" class="btn btn-gold btn-lg"><%= t.nav_contact %></a>
+    </div>
+  </section>
+<%- include('partials/footer') %>

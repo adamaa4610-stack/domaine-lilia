@@ -1,0 +1,59 @@
+<%- include('partials/header') %>
+  <section class="page-header">
+    <div class="container">
+      <h1><%= t.booking_title %></h1>
+      <p><%= t.booking_subtitle %></p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <% if (success) { %>
+        <div class="alert alert-success"><%= success %></div>
+      <% } %>
+      <% if (error) { %>
+        <div class="alert alert-error"><%= error %></div>
+      <% } %>
+      <form class="booking-form" action="/<%= lang %>/booking" method="POST">
+        <div class="form-group">
+          <label for="room_id"><%= t.booking_room %></label>
+          <select name="room_id" id="room_id" required>
+            <option value=""><%= t.booking_room %>...</option>
+            <% rooms.forEach(room => { %>
+              <option value="<%= room.id %>"><%= room['name_' + lang] %> - <%= room.price %> <%= t.room_price %>/<%= t.room_per_night %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="check_in"><%= t.booking_checkin %></label>
+            <input type="date" name="check_in" id="check_in" required min="<%= new Date().toISOString().split('T')[0] %>">
+          </div>
+          <div class="form-group">
+            <label for="check_out"><%= t.booking_checkout %></label>
+            <input type="date" name="check_out" id="check_out" required min="<%= new Date().toISOString().split('T')[0] %>">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="guest_name"><%= t.booking_name %></label>
+          <input type="text" name="guest_name" id="guest_name" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="email"><%= t.booking_email %></label>
+            <input type="email" name="email" id="email" required>
+          </div>
+          <div class="form-group">
+            <label for="phone"><%= t.booking_phone %></label>
+            <input type="tel" name="phone" id="phone" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="message"><%= t.booking_message %></label>
+          <textarea name="message" id="message" rows="3"></textarea>
+        </div>
+        <button type="submit" class="btn btn-gold btn-lg"><%= t.booking_btn %></button>
+      </form>
+    </div>
+  </section>
+<%- include('partials/footer') %>

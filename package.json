@@ -1,0 +1,20 @@
+{
+  "name": "domaine-lilia",
+  "version": "1.0.0",
+  "description": "Domaine De Lilia - Hotel Booking Website",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "engines": {
+    "node": "22.x"
+  },
+  "dependencies": {
+    "sql.js": "^1.10.0",
+    "@libsql/client": "^0.14.0",
+    "ejs": "^3.1.10",
+    "express": "^4.21.0",
+    "express-session": "^1.18.0"
+  }
+}

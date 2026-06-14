@@ -1,0 +1,20 @@
+<%- include('partials/header') %>
+  <section class="page-header">
+    <div class="container">
+      <h1><%= t.gallery_title %></h1>
+      <p><%= t.gallery_subtitle %></p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="gallery-grid">
+        <% for(let i = 1; i <= 8; i++) { %>
+          <div class="gallery-item">
+            <img src="/images/gallery-<%= i %>.jpg" alt="<%= t.site_name %>">
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </section>
+<%- include('partials/footer') %>

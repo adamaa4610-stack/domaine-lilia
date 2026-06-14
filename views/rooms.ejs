@@ -1,0 +1,31 @@
+<%- include('partials/header') %>
+  <section class="page-header">
+    <div class="container">
+      <h1><%= t.rooms_title %></h1>
+      <p><%= t.rooms_subtitle %></p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="rooms-grid">
+        <% rooms.forEach(room => { %>
+          <div class="room-card room-card-full">
+            <div class="room-image">
+              <img src="<%= room.image %>" alt="<%= room['name_' + lang] %>">
+              <div class="room-price"><%= room.price %> <%= t.room_price %> <span><%= t.room_per_night %></span></div>
+            </div>
+            <div class="room-info">
+              <h3><%= room['name_' + lang] %></h3>
+              <p><%= room['description_' + lang] %></p>
+              <div class="room-meta">
+                <span><i class="fas fa-users"></i> <%= room.capacity %> <%= t.room_guests %></span>
+              </div>
+              <a href="/<%= lang %>/booking" class="btn btn-gold"><%= t.room_btn %></a>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+  </section>
+<%- include('partials/footer') %>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="<%= lang %>" dir="<%= lang === 'ar' ? 'rtl' : 'ltr' %>">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= t.site_name %> | <%= page === 'home' ? t.site_tagline : t['nav_' + page] || '' %></title>
+  <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="loader" id="loader">
+    <div class="loader-content">
+      <div class="loader-icon"><i class="fas fa-hotel"></i></div>
+      <h2 class="loader-text">Domaine De Lilia</h2>
+      <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+    </div>
+  </div>
+
+  <nav class="navbar" id="navbar">
+    <div class="container">
+      <a href="/<%= lang %>" class="nav-logo">
+        <span class="logo-icon"><i class="fas fa-hotel"></i></span>
+        <span class="logo-text"><%= t.site_name %></span>
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="nav-menu" id="navMenu">
+        <ul class="nav-links">
+          <li><a href="/<%= lang %>" class="<%= page === 'home' ? 'active' : '' %>"><%= t.nav_home %></a></li>
+          <li><a href="/<%= lang %>/about" class="<%= page === 'about' ? 'active' : '' %>"><%= t.nav_about %></a></li>
+          <li><a href="/<%= lang %>/rooms" class="<%= page === 'rooms' ? 'active' : '' %>"><%= t.nav_rooms %></a></li>
+          <li><a href="/<%= lang %>/gallery" class="<%= page === 'gallery' ? 'active' : '' %>"><%= t.nav_gallery %></a></li>
+          <li><a href="/<%= lang %>/booking" class="<%= page === 'booking' ? 'active' : '' %>"><%= t.nav_booking %></a></li>
+          <li><a href="/<%= lang %>/contact" class="<%= page === 'contact' ? 'active' : '' %>"><%= t.nav_contact %></a></li>
+        </ul>
+        <div class="lang-switcher">
+          <% ['ar', 'fr', 'en'].forEach(l => { %>
+            <% if (l !== lang) { %>
+              <a href="/<%= l %><%= page === 'home' ? '' : '/' + page %>" class="lang-link"><%= t['language_' + l] %></a>
+            <% } %>
+          <% }) %>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <main>

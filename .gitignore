@@ -1,0 +1,8 @@
+node_modules/
+database/hotel.db
+.env
+server_stdout.log
+server_stderr.log
+server_output.log
+start.ps1
+start.bat
