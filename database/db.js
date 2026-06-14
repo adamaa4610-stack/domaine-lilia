@@ -7,15 +7,45 @@ const useTurso = !!(process.env.TURSO_URL && process.env.TURSO_TOKEN);
 let db;
 let dbReady = false;
 
+function tursoValue(v) {
+  if (v === null || v === undefined) return null;
+  if (typeof v === 'number') return v % 1 === 0 ? { type: 'integer', value: String(v) } : { type: 'float', value: String(v) };
+  return { type: 'text', value: String(v) };
+}
+
+function tursoFetch(stmtOrSql, maybeArgs) {
+  const sql = typeof stmtOrSql === 'string' ? stmtOrSql : stmtOrSql.sql;
+  const args = typeof stmtOrSql === 'string' ? (maybeArgs || []) : (stmtOrSql.args || []);
+  const url = process.env.TURSO_URL.replace('libsql://', 'https://') + '/v2/pipeline';
+  return fetch(url, {
+    method: 'POST',
+    headers: {
+      Authorization: 'Bearer ' + process.env.TURSO_TOKEN,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      requests: [{ type: 'execute', stmt: { sql, args: args.map(tursoValue) } }],
+    }),
+  }).then(r => r.json()).then(json => {
+    if (!json.results) throw new Error(json.error || 'Unknown Turso error');
+    const result = json.results[0];
+    if (result.type === 'error') throw new Error(result.error?.message || 'Turso error');
+    const resp = result.response.result;
+    const cols = resp.cols || [];
+    const rows = (resp.rows || []).map(r => {
+      const obj = {};
+      cols.forEach((c, i) => { obj[c.name] = r[i] && r[i].value !== undefined ? r[i].value : r[i]; });
+      return obj;
+    });
+    return { rows, columns: cols.map(c => c.name), lastInsertRowid: resp.last_insert_rowid };
+  });
+}
+
 async function getDB() {
   if (dbReady) return db;
 
   if (useTurso) {
-    const { createClient } = require('@libsql/client/web');
-    db = createClient({
-      url: process.env.TURSO_URL,
-      authToken: process.env.TURSO_TOKEN,
-    });
+    db = { execute: tursoFetch };
   } else {
     const initSqlJs = require('sql.js');
     const SQL = await initSqlJs();
