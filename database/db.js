@@ -11,7 +11,7 @@ async function getDB() {
   if (dbReady) return db;
 
   if (useTurso) {
-    const { createClient } = require('@libsql/client');
+    const { createClient } = require('@libsql/client/web');
     db = createClient({
       url: process.env.TURSO_URL,
       authToken: process.env.TURSO_TOKEN,

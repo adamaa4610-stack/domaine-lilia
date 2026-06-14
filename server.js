@@ -178,7 +178,7 @@ app.post('/:lang/contact', wrap(async (req, res) => {
 // Error handler
 app.use((err, req, res, next) => {
   console.error('Server error:', err);
-  res.status(500).send('Internal Server Error');
+  res.status(500).send('Internal Server Error: ' + (err.message || err));
 });
 
 if (process.env.VERCEL !== '1') {
