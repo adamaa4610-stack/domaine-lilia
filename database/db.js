@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const https = require('https');
 
 // Database selection
 const useTurso = !!(process.env.TURSO_URL && process.env.TURSO_TOKEN);
@@ -13,20 +14,43 @@ function tursoValue(v) {
   return { type: 'text', value: String(v) };
 }
 
+function httpsRequest(url, options, body) {
+  return new Promise((resolve, reject) => {
+    const u = new URL(url);
+    const req = https.request({
+      hostname: u.hostname,
+      port: u.port || 443,
+      path: u.pathname + u.search,
+      method: options.method || 'POST',
+      headers: options.headers || {},
+    }, res => {
+      let data = '';
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => {
+        try { resolve(JSON.parse(data)); }
+        catch (e) { reject(new Error('Invalid JSON response: ' + data.substring(0, 200))); }
+      });
+    });
+    req.on('error', reject);
+    if (body) req.write(body);
+    req.end();
+  });
+}
+
 function tursoFetch(stmtOrSql, maybeArgs) {
   const sql = typeof stmtOrSql === 'string' ? stmtOrSql : stmtOrSql.sql;
   const args = typeof stmtOrSql === 'string' ? (maybeArgs || []) : (stmtOrSql.args || []);
-  const url = process.env.TURSO_URL.replace('libsql://', 'https://') + '/v2/pipeline';
-  return fetch(url, {
+  const host = process.env.TURSO_URL.replace('libsql://', '');
+  const body = JSON.stringify({
+    requests: [{ type: 'execute', stmt: { sql, args: args.map(tursoValue) } }],
+  });
+  return httpsRequest('https://' + host + '/v2/pipeline', {
     method: 'POST',
     headers: {
       Authorization: 'Bearer ' + process.env.TURSO_TOKEN,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({
-      requests: [{ type: 'execute', stmt: { sql, args: args.map(tursoValue) } }],
-    }),
-  }).then(r => r.json()).then(json => {
+  }, body).then(json => {
     if (!json.results) throw new Error(json.error || 'Unknown Turso error');
     const result = json.results[0];
     if (result.type === 'error') throw new Error(result.error?.message || 'Turso error');
