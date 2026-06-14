@@ -181,16 +181,20 @@ app.use((err, req, res, next) => {
   res.status(500).send('Internal Server Error');
 });
 
-async function startServer() {
-  await getDB();
-  console.log('Database initialized');
+if (process.env.VERCEL !== '1') {
+  async function startServer() {
+    await getDB();
+    console.log('Database initialized');
 
-  app.listen(PORT, () => {
-    console.log(`Domaine De Lilia website running at http://localhost:${PORT}`);
+    app.listen(PORT, () => {
+      console.log(`Domaine De Lilia website running at http://localhost:${PORT}`);
+    });
+  }
+
+  startServer().catch(err => {
+    console.error('Failed to start server:', err);
+    process.exit(1);
   });
 }
 
-startServer().catch(err => {
-  console.error('Failed to start server:', err);
-  process.exit(1);
-});
+module.exports = app;
